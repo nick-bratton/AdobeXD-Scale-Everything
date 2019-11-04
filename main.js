@@ -67,34 +67,45 @@ function create() {
 	return panel;
 }
 
+function translateByScaleFactor(node, scaleFactor){
+	node.placeInParentCoordinates({x: 0,y: 0}, {x: node.topLeftInParent.x *= scaleFactor, y: node.topLeftInParent.y *= scaleFactor});
+}
+
 function applyModifications (node, scaleFactor){
 	switch (node.constructor.name){
 		case 'Rectangle':
 			// what about cornerRadii?
 			node.width *= scaleFactor;
 			node.height *= scaleFactor;
+			translateByScaleFactor(node, scaleFactor);
 			break;
 		case 'Polygon':
 			// what about cornerRadii?
 			node.width *= scaleFactor;
 			node.height *= scaleFactor;
+			translateByScaleFactor(node, scaleFactor);
 			break;
 		case 'Ellipse':
 				node.radiusX *= scaleFactor;
 				node.radiusY *= scaleFactor;
+				translateByScaleFactor(node, scaleFactor);
 			break;
 		case 'Line':
 				node.resize(node.localBounds.width *= scaleFactor, node.localBounds.height *= scaleFactor);
+				translateByScaleFactor(node, scaleFactor);
 			break;
 		case 'Text':
 				node.fontSize *= scaleFactor;
 				node.lineSpacing *= scaleFactor;
+				translateByScaleFactor(node, scaleFactor);
 			break;
 		case 'Group':
 				node.resize(node.localBounds.width *= scaleFactor, node.localBounds.height *= scaleFactor);
+				translateByScaleFactor(node, scaleFactor);
 			break;
 		case 'SymbolInstance':
 				node.resize(node.localBounds.width *= scaleFactor, node.localBounds.height *= scaleFactor);
+				translateByScaleFactor(node, scaleFactor);
 			break;
 		default: 
 			console.log('This plugin does not know how to handle layers of type: ' + node.constructor.name);
