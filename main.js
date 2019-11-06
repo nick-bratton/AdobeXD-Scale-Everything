@@ -37,10 +37,7 @@ function create() {
 		const { editDocument } = require("application");
 		const scaleFactor = Number(document.querySelector("#inputScaleFactor").value);
 		editDocument({ editLabel: "Scale selection" }, function (selection) {
-			// 1. need to handle locked items
-			// console.log(selection.itemsIncludingLocked.length);
-			// 2. need to reposition and scale probably  
-			// 3. need to handle shadows, strokes, blur, background blur, vectors
+			// locked items not currently handled
 			if (selection.items[0].constructor.name == 'Artboard'){
 				scaleArtboardAndItsChildren(selection, scaleFactor);
 			}
@@ -59,42 +56,27 @@ function translateByScaleFactor(node, scaleFactor){
 	node.placeInParentCoordinates({x: 0,y: 0}, {x: node.topLeftInParent.x *= scaleFactor, y: node.topLeftInParent.y *= scaleFactor});
 }
 
+function resizeNode(node, scaleFactor){
+	node.resize(node.localBounds.width *= scaleFactor, node.localBounds.height *= scaleFactor);
+}
+
 function applyModifications (node, scaleFactor){
 	switch (node.constructor.name){
 		case 'Rectangle':
-			// what about cornerRadii?
-			node.width *= scaleFactor;
-			node.height *= scaleFactor;
-			translateByScaleFactor(node, scaleFactor);
-			break;
 		case 'Polygon':
-			// what about cornerRadii?
-			node.width *= scaleFactor;
-			node.height *= scaleFactor;
-			translateByScaleFactor(node, scaleFactor);
-			break;
 		case 'Ellipse':
-			node.radiusX *= scaleFactor;
-			node.radiusY *= scaleFactor;
-			translateByScaleFactor(node, scaleFactor);
-			break;
 		case 'Line':
-			node.resize(node.localBounds.width *= scaleFactor, node.localBounds.height *= scaleFactor);
+		case 'Group':
+		case 'BooleanGroup':
+		case 'SymbolInstance':
+			resizeNode(node, scaleFactor);
 			translateByScaleFactor(node, scaleFactor);
 			break;
 		case 'Text':
 			node.fontSize *= scaleFactor;
 			node.lineSpacing *= scaleFactor;
 			translateByScaleFactor(node, scaleFactor);
-			break;
-		case 'Group':
-			node.resize(node.localBounds.width *= scaleFactor, node.localBounds.height *= scaleFactor);
-			translateByScaleFactor(node, scaleFactor);
-			break;
-		case 'SymbolInstance':
-			node.resize(node.localBounds.width *= scaleFactor, node.localBounds.height *= scaleFactor);
-			translateByScaleFactor(node, scaleFactor);
-			break;
+		break;
 		default: 
 			console.log('This plugin does not know how to handle layers of type: ' + node.constructor.name);
 	}
