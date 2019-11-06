@@ -63,12 +63,16 @@ function resizeNode(node, scaleFactor){
 function applyModifications (node, scaleFactor){
 	switch (node.constructor.name){
 		case 'Rectangle':
-		case 'Polygon':
 		case 'Ellipse':
+		case 'Polygon':
 		case 'Line':
+		case 'Path':
 		case 'Group':
 		case 'BooleanGroup':
+		case 'Group':
 		case 'SymbolInstance':
+		case 'RepeatGrid':
+		case 'LinkedGraphic':
 			resizeNode(node, scaleFactor);
 			translateByScaleFactor(node, scaleFactor);
 			break;
